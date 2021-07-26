@@ -9,7 +9,7 @@
                     <div class="col-10">
                         @include('forms._input', [
     'name'=>'search',
-    'placeholder'=>'Пользователь',
+    'placeholder'=>'Пользователь...',
 ])
 
                     </div>
