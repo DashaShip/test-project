@@ -34,6 +34,8 @@
  * Date: 2021-03-02T17:08Z
  */
 
+/*! selectize.js - v0.12.6 | https://github.com/selectize/selectize.js | Apache License (v2) */
+
 /**
  * @license
  * Lodash <https://lodash.com/>

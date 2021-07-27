@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laratrust\Traits\LaratrustUserTrait;
 
 /**
  * App\Models\User
@@ -35,9 +38,21 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @mixin \Eloquent
  * @method static \Illuminate\Database\Eloquent\Builder|User filter(array $frd)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Permission[] $permissions
+ * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
+ * @property-read int|null $roles_count
+ * @method static Builder|User orWherePermissionIs($permission = '')
+ * @method static Builder|User orWhereRoleIs($role = '', $team = null)
+ * @method static Builder|User whereDoesntHavePermission()
+ * @method static Builder|User whereDoesntHaveRole()
+ * @method static Builder|User wherePermissionIs($permission = '', $boolean = 'and')
+ * @method static Builder|User whereRoleIs($role = '', $team = null, $boolean = 'and')
+ * @property-read \App\Models\Role $Role
  */
 class User extends Authenticatable
 {
+    use LaratrustUserTrait;
     use HasFactory, Notifiable;
 
     protected $table = 'users';
@@ -173,6 +188,23 @@ class User extends Authenticatable
         }
         }
         return $query;
+    }
+
+
+    /**
+     * @return BelongsTo
+     */
+    public function Role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
     }
 
 }

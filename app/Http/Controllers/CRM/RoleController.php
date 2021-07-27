@@ -5,12 +5,13 @@ namespace App\Http\Controllers\CRM;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class UserController extends Controller
+class RoleController extends Controller
 {
     /**
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
@@ -18,9 +19,9 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $frd = $request->all();
-        $users = User::filter($frd)->get();
-        //$users = User::get();
-        return view('crm.users.index',compact('users'));
+        $roles = Role::filter($frd)->get();
+//        $roles = Role::get();
+        return view('crm.roles.index',compact('roles'));
     }
 
     /**
@@ -28,7 +29,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('crm.users.create');
+        return view('crm.roles.create');
     }
 
     /**
@@ -42,29 +43,20 @@ class UserController extends Controller
 
         $rules = [
             'name'=>'required|min:2|max:30',
-            'email'=>'required',
-            'password'=>'required|min:8',
         ];
 
         $messages = [
-            'name.required'=>'Введите имя!',
+            'name.required'=>'Введите имя роли!',
             'name.min'=>'Имя должно быть более 2 символов!',
             'name.max'=>'Имя должно быть меньше 30 символов!',
-            'email.required'=>'Введите почту!',
-            'password.required'=>'Введите пароль!',
-            'paassword.min'=>'Пароль должен быть больше 8 сиволов!',
         ];
 
         Validator::make($frd,$rules,$messages)->validate();
 
-        $frd['password']=Hash::make(Arr::get($frd, 'password'));
+        $role = new Role($frd);
+        $role->save();
 
-        $user = new User($frd);
-        $user->save();
-
-        $user->syncRoles(Role::whereIn('id',Arr::get($frd, 'roles',[]))->get());
-
-        return redirect()->route('crm.users.index');
+        return redirect()->route('crm.roles.index');
     }
 
     /**
@@ -79,53 +71,48 @@ class UserController extends Controller
     }
 
     /**
-     * @param User $user
+     * @param Role $role
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function edit(User $user)
+    public function edit(Role $role)
     {
-        return view('crm.users.edit', compact('user'));
+        return view('crm.roles.edit', compact('role'));
     }
 
     /**
      * @param Request $request
-     * @param User $user
+     * @param Role $role
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, Role $role)
     {
         $frd = $request->all();
 
         $rules = [
             'name'=>'required|min:2|max:30',
-            'email'=>'required',
-            'password'=>'required|min:8',
         ];
 
         $messages = [
             'name.required'=>'Введите имя!',
             'name.min'=>'Имя должно быть более 2 символов!',
             'name.max'=>'Имя должно быть меньше 30 символов!',
-            'email.required'=>'Введите почту!',
-            'password.required'=>'Введите пароль!',
-            'paassword.min'=>'Пароль должен быть больше 8 сиволов!',
         ];
 
         Validator::make($frd,$rules,$messages)->validate();
 
-        $user->update($frd);
-        $user->syncRoles(Role::whereIn('id',Arr::get($frd, 'roles',[]))->get());
-        return redirect()->route('crm.users.index');
+        $role->update($frd);
+
+        return redirect()->route('crm.roles.index');
     }
 
     /**
-     * @param User $user
+     * @param Role $role
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(User $user)
+    public function destroy(Role $role)
     {
-        $user->delete();
-        return redirect()->route('crm.users.index');
+        $role->delete();
+        return redirect()->route('crm.roles.index');
     }
 }

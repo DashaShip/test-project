@@ -13,18 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/crm/users', function () {
-    return view('welcome');
-});
+Route::get('/', [App\Http\Controllers\CRM\UserController::class, 'index'])->name('users');
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
-Route::middleware(['auth'])
+Route::middleware(['role:admin','auth'])
     ->name('crm.')
     ->prefix('crm')
     ->group(static function() {
         Route::resource('users', \App\Http\Controllers\CRM\UserController::class);
+        Route::resource('roles', \App\Http\Controllers\CRM\RoleController::class);
+        Route::resource('product', \App\Http\Controllers\CRM\ProductControllerr::class);
     });
+
