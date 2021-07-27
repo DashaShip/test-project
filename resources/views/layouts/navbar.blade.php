@@ -13,8 +13,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('crm.users.index') }}">{{ __('Пользователи') }}</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('crm.roles.index') }}">{{ __('Роли') }}</a>
+                </li>
             </ul>
-
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">
                 <!-- Authentication Links -->

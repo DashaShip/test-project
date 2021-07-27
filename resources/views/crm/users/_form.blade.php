@@ -21,3 +21,12 @@
     'placeholder'=>'Введите пароль',
     'value'=> '',
  ])
+
+@include('forms._multiselect', [
+    'label'=>'Выбрать роль',
+    'list'=>\App\Models\Role::pluck('name','id'),
+    'name'=>'roles[]',
+    'selected'=>isset($user) ? $user->getRoles()->pluck('name','id'):[],
+    'required'=>'required',
+])
+
