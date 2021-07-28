@@ -2,8 +2,14 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * App\Models\Product
@@ -26,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
+ * @method static Builder|Product filter(array $frd)
  */
 class Product extends Model
 {
@@ -40,7 +47,7 @@ class Product extends Model
         'name',
         'description',
         'price',
-        'imege_id',
+        'image_id',
     ];
 
     /**
@@ -123,4 +130,84 @@ class Product extends Model
         return $this->updated_at;
     }
 
+    /**
+     * @param Builder $query
+     * @param array $frd
+     * @return Builder
+     */
+    public  function scopeFilter(Builder $query, array $frd)
+    {
+        foreach ($frd as $key => $value) {
+            if (null === $value) {
+                continue;
+            }
+            switch ($key) {
+                case 'search':
+                    {
+                        $query->where(static function (Builder $query) use ($value) {
+                            return $query->where('name', 'like', '%'. $value. '%');
+                        });
+                    }
+                    break;
+            }
+        }
+        return $query;
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function file():HasOne
+    {
+        return $this->hasOne(File::class,'id','image_id');
+    }
+
+    /**
+     * @return File|null
+     */
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param UploadedFile $uploadedFile
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    public function uploadFile(UploadedFile $uploadedFile): void
+    {
+        /**@var Storage $storage */
+        $storage = Storage::disk('public');
+        $name = Str::slug($this->getName()).'-'.$this->getkey().'.jpg';
+        $path = 'images/'.$name;
+
+
+        $storage->put($path,$uploadedFile->get());
+        $file = $this->getFile();
+        $path .= '?'.Carbon::now();
+
+        if ($file !== null) {
+            $file->update([
+                'uses_id'=>auth()->id(),
+                'name'=>$name,
+                'path'=>$path,
+            ]);
+        } else {
+            $file = $this->file()->create([
+                'user_id'=>auth()->id(),
+                'name'=>$name,
+                'path'=>$path,
+            ]);
+        }
+        $this->update(['image_id' => $file->getKey()]);
+    }
+
+    public function getImagePath(): ?string
+    {
+        $result = null;
+        if ($this->getFile() !== null) {
+            $result = '/storage/'.$this->getFile()->getPath();
+        }
+        return $result;
+    }
 }

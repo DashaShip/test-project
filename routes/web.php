@@ -26,6 +26,11 @@ Route::middleware(['role:admin','auth'])
     ->group(static function() {
         Route::resource('users', \App\Http\Controllers\CRM\UserController::class);
         Route::resource('roles', \App\Http\Controllers\CRM\RoleController::class);
-        Route::resource('product', \App\Http\Controllers\CRM\ProductControllerr::class);
+        Route::resource('products', \App\Http\Controllers\CRM\ProductControllerr::class);
+    });
+
+Route::middleware(['role:user','auth'])
+    ->group(static function(){
+        Route::get('/products', [\App\Http\Controllers\Site\SiteProductController::class, 'index'])->name('products');
     });
 

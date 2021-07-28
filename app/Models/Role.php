@@ -122,6 +122,12 @@ class Role extends LaratrustRole
     {
         return $this->updated_at;
     }
+
+    /**
+     * @param Builder $query
+     * @param array $frd
+     * @return Builder
+     */
     public  function scopeFilter(Builder $query, array $frd)
     {
         foreach ($frd as $key => $value) {
