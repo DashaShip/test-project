@@ -50,6 +50,8 @@ use Laratrust\Traits\LaratrustUserTrait;
  * @method static Builder|User wherePermissionIs($permission = '', $boolean = 'and')
  * @method static Builder|User whereRoleIs($role = '', $team = null, $boolean = 'and')
  * @property-read \App\Models\Role $Role
+ * @property-read Collection|\App\Models\File[] $files
+ * @property-read int|null $files_count
  */
 class User extends Authenticatable
 {

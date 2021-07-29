@@ -4,12 +4,12 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 my-5">
-                {{Form::open(['url'=>route('crm.products.index'),'method'=>'GET'])}}
+                {{Form::open(['url'=>route('crm.categories.index'),'method'=>'GET'])}}
                 <div class="row">
                     <div class="col-10">
                         @include('forms._input', [
     'name'=>'search',
-    'placeholder'=>'Продукты...',
+    'placeholder'=>'Категории...',
 ])
 
                     </div>
@@ -22,68 +22,50 @@
                 </div>
                 <div class="row justify-content-start">
                     <div class="col-auto">
-                        <a href="{{route('crm.products.create')}}" class="btn btn-success">
-                            Создать новый продукт
+                        <a href="{{route('crm.categories.create')}}" class="btn btn-success">
+                            Создать новую категорию
                         </a>
                     </div>
                 </div>
                 <div class="row pb-2 mt-5">
                     <div class="col-12">
-                        Список продуктов
+                        Список категорий
                     </div>
                 </div>
                 <div class="row pb-2 mt-4">
                     <div class="col-1">
                         Id
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         Имя
                     </div>
                     <div class="col-2">
-                        Описание
-                    </div>
-                    <div class="col-2">
-                        Цена
-                    </div>
-                    <div class="col-2">
-                        Фото
-                    </div>
-                    <div class="col-2">
-                        Категория
+                        Ссылка
                     </div>
                     <div class="col-2">
                         Действия
                     </div>
                 </div>
 
-                @forelse($products as $product)
+                @forelse($categories as $category)
 
                     <div class="row pb-2 mt-4">
                     <div class="col-1">
-                        {{$product->getKey()}}
+                        {{$category->getKey()}}
                     </div>
-                    <div class="col-1">
-                        {{$product->getName()}}
+                    <div class="col-3">
+                        {{$category->getName()}}
                     </div>
                         <div class="col-2">
-                            {{$product->getDescription()}}
-                        </div>
-                        <div class="col-2">
-                            {{$product->getPrice()}}
-                        </div>
-                        <div class="col-2">
-                            <img src="{{$product-> getImagePath()}}" alt="" style="width: 100px">
-                        </div>
-                        <div class="col-2">
-                            {{$product->getPrice()}}
+                            {{$category->getSlug()}}
                         </div>
                     <div class="col-1">
-                        <a href="{{route('crm.products.edit', $product)}}" class="btn btn-success">
+                        <a href="{{route('crm.categories.edit', $category)}}" class="btn btn-success">
                             <l class="fas fa-pen"></l>
                         </a>
                     </div>
                     <div class="col-1">
-                        {{Form::open(['method'=>'DELETE','url'=>route('crm.products.destroy',$product)])}}
+                        {{Form::open(['method'=>'DELETE','url'=>route('crm.categories.destroy',$category)])}}
                         <button class="btn btn-danger">
                             <l class="fas fa-trash"></l>
                         </button>
@@ -92,7 +74,7 @@
 
                     </div>
             @empty
-                <div> Продуктов нет </div>
+                <div> Категорий нет </div>
             @endforelse
 
             </div>

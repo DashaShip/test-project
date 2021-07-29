@@ -27,6 +27,8 @@ Route::middleware(['role:admin','auth'])
         Route::resource('users', \App\Http\Controllers\CRM\UserController::class);
         Route::resource('roles', \App\Http\Controllers\CRM\RoleController::class);
         Route::resource('products', \App\Http\Controllers\CRM\ProductControllerr::class);
+        Route::resource('categories', \App\Http\Controllers\CRM\CategoryController::class);
+
     });
 
 Route::middleware(['role:user','auth'])

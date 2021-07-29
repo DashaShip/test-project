@@ -29,15 +29,14 @@
 
                 <div class="row pb-2 mt-4">
                 @forelse($products as $product)
-
-                        <div class="col-4">
-                            <div class="card" style="width: 18rem;">
+                        <div class="col-lg-4 col-sm-6">
+                            <div class="card" style="width: 15rem;">
                                 <img src="{{$product-> getImagePath()}}" class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{$product->getName()}}</h5>
                                     <p class="card-text">{{$product->getDescription()}}</p>
                                     <p class="card-price">{{$product->getPrice()}}</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    <a href="#" class="btn btn-primary">В корзину</a>
                                 </div>
                             </div>
                         </div>

@@ -33,6 +33,9 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
  * @method static Builder|Product filter(array $frd)
+ * @property-read \App\Models\File|null $file
+ * @property int|null $category_id индетификатор категории
+ * @method static Builder|Product whereCategoryId($value)
  */
 class Product extends Model
 {
@@ -48,6 +51,7 @@ class Product extends Model
         'description',
         'price',
         'image_id',
+        'category_id',
     ];
 
     /**
@@ -171,6 +175,22 @@ class Product extends Model
     }
 
     /**
+     * @return mixed
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function Category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    /**
      * @param UploadedFile $uploadedFile
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
@@ -202,6 +222,9 @@ class Product extends Model
         $this->update(['image_id' => $file->getKey()]);
     }
 
+    /**
+     * @return string|null
+     */
     public function getImagePath(): ?string
     {
         $result = null;
@@ -210,4 +233,5 @@ class Product extends Model
         }
         return $result;
     }
+
 }

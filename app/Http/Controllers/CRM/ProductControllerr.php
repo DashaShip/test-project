@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\File;
 use App\Models\Product;
 use App\Models\Role;
@@ -32,7 +33,8 @@ class ProductControllerr extends Controller
      */
     public function create()
     {
-        return view('crm.products.create');
+        $categoryList = Category::getCategoryList();
+        return view('crm.products.create', compact('categoryList'));
     }
 
     /**
@@ -88,19 +90,21 @@ class ProductControllerr extends Controller
      */
     public function edit(Product $product)
     {
-        return view('crm.products.edit', compact('product'));
+        $category = $product->getCategory();
+        $categoryList = Category::getCategoryList();
+        return view('crm.products.edit', compact('product', 'categoryList', 'category'));
     }
 
     /**
      * @param Request $request
      * @param Product $product
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \Illuminate\Validation\ValidationException
      */
     public function update(Request $request, Product $product)
     {
         $frd = $request->all();
-
         $rules = [
             'name'=>'required',
             'description'=>'required',

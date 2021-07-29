@@ -25,6 +25,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder|File whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|File whereUserId($value)
  * @mixin \Eloquent
+ * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\Product|null $user
  */
 class File extends Model
 {

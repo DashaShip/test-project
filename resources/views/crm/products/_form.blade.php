@@ -26,3 +26,9 @@
     'label'=>'Фотография',
     'name'=>'file',
  ])
+
+@include('forms._select', [
+    'name'=>'category_id',
+    'label'=>'Категория',
+    'list'=>$categoryList,
+])
