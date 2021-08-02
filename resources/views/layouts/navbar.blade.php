@@ -25,6 +25,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('crm.categories.index') }}">{{ __('Категории') }}</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('crm.posts.index') }}">{{ __('Статьи') }}</a>
+                </li>
             </ul>
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ml-auto">

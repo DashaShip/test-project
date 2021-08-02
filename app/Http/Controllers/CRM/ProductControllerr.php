@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\File;
 use App\Models\Product;
 use App\Models\Role;
+use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
@@ -22,6 +23,8 @@ class ProductControllerr extends Controller
      */
     public function index(Request $request)
     {
+        SEOMeta::setTitle('Продукты');
+        SEOMeta::setDescription('Просмотр списка продуктов');
         $frd = $request->all();
         $products = Product::filter($frd)->get();
        // $products = Product::get();
@@ -33,6 +36,8 @@ class ProductControllerr extends Controller
      */
     public function create()
     {
+        SEOMeta::setTitle('Новый продукт');
+        SEOMeta::setDescription('Страница создания записи продукта');
         $categoryList = Category::getCategoryList();
         return view('crm.products.create', compact('categoryList'));
     }
@@ -90,6 +95,8 @@ class ProductControllerr extends Controller
      */
     public function edit(Product $product)
     {
+        SEOMeta::setTitle('Редактировать записи');
+        SEOMeta::setDescription('Страница редактирования записи продукта');
         $category = $product->getCategory();
         $categoryList = Category::getCategoryList();
         return view('crm.products.edit', compact('product', 'categoryList', 'category'));

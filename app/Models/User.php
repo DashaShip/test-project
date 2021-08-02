@@ -172,6 +172,11 @@ class User extends Authenticatable
         $this->updated_at = $updated_at;
     }
 
+    /**
+     * @param Builder $query
+     * @param array $frd
+     * @return Builder
+     */
     public  function scopeFilter(Builder $query, array $frd)
     {
         foreach ($frd as $key => $value) {
@@ -181,6 +186,7 @@ class User extends Authenticatable
 
 
         switch ($key) {
+
             case 'search':
                 {
                     $query->where(static function (Builder $query) use ($value) {

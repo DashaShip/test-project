@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Role;
+use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,6 +18,8 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        SEOMeta::setTitle('Категории');
+        SEOMeta::setDescription('Просмотр списка категорий');
         $frd = $request->all();
         $categories = Category::filter($frd)->get();
         //$categories = Category::get();
@@ -28,6 +31,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
+        SEOMeta::setTitle('Новая категория');
+        SEOMeta::setDescription('Страница создания новой категории');
         $categoryList = Category::getCategoryList();
         return view('crm.categories.create',compact('categoryList'));
     }
@@ -73,6 +78,8 @@ class CategoryController extends Controller
      */
         public function edit(Category $category)
     {
+        SEOMeta::setTitle('Редактировть записть');
+        SEOMeta::setDescription('Страница редактирования записи категории');
         $categoryList = Category::getCategoryList([$category->getKey()]);
         return view('crm.categories.edit', compact('category','categoryList'));
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ImageTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,10 +37,12 @@ use Illuminate\Support\Str;
  * @property-read \App\Models\File|null $file
  * @property int|null $category_id индетификатор категории
  * @method static Builder|Product whereCategoryId($value)
+ * @property-read \App\Models\Category|null $Category
  */
 class Product extends Model
 {
     use HasFactory;
+    use ImageTrait;
 
     protected $table = 'product';
 
@@ -153,26 +156,20 @@ class Product extends Model
                         });
                     }
                     break;
+
+                case 'category_id':
+                {
+                    $query->where(static function (Builder $query) use ($value) {
+                        return $query->where('category_id','=',$value);
+                    });
+                }
+                    break;
             }
         }
         return $query;
     }
 
-    /**
-     * @return HasOne
-     */
-    public function file():HasOne
-    {
-        return $this->hasOne(File::class,'id','image_id');
-    }
 
-    /**
-     * @return File|null
-     */
-    public function getFile(): ?File
-    {
-        return $this->file;
-    }
 
     /**
      * @return mixed
@@ -190,48 +187,6 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    /**
-     * @param UploadedFile $uploadedFile
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    public function uploadFile(UploadedFile $uploadedFile): void
-    {
-        /**@var Storage $storage */
-        $storage = Storage::disk('public');
-        $name = Str::slug($this->getName()).'-'.$this->getkey().'.jpg';
-        $path = 'images/'.$name;
 
-
-        $storage->put($path,$uploadedFile->get());
-        $file = $this->getFile();
-        $path .= '?'.Carbon::now();
-
-        if ($file !== null) {
-            $file->update([
-                'uses_id'=>auth()->id(),
-                'name'=>$name,
-                'path'=>$path,
-            ]);
-        } else {
-            $file = $this->file()->create([
-                'user_id'=>auth()->id(),
-                'name'=>$name,
-                'path'=>$path,
-            ]);
-        }
-        $this->update(['image_id' => $file->getKey()]);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getImagePath(): ?string
-    {
-        $result = null;
-        if ($this->getFile() !== null) {
-            $result = '/storage/'.$this->getFile()->getPath();
-        }
-        return $result;
-    }
 
 }

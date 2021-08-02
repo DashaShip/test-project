@@ -45,13 +45,10 @@
                     <div class="col-2">
                         Цена
                     </div>
-                    <div class="col-2">
+                    <div class="col-3">
                         Фото
                     </div>
-                    <div class="col-2">
-                        Категория
-                    </div>
-                    <div class="col-2">
+                    <div class="col-3">
                         Действия
                     </div>
                 </div>
@@ -71,11 +68,8 @@
                         <div class="col-2">
                             {{$product->getPrice()}}
                         </div>
-                        <div class="col-2">
+                        <div class="col-3">
                             <img src="{{$product-> getImagePath()}}" alt="" style="width: 100px">
-                        </div>
-                        <div class="col-2">
-                            {{$product->getPrice()}}
                         </div>
                     <div class="col-1">
                         <a href="{{route('crm.products.edit', $product)}}" class="btn btn-success">

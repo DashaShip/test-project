@@ -1,10 +1,14 @@
 @extends('layouts.app')
 
+<?php
+    $categories = \App\Models\Category::pluck('name','id')->toArray();
+    ?>
+
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 my-5">
-                {{Form::open(['url'=>route('crm.products.index'),'method'=>'GET'])}}
+                {{Form::open(['url'=>url('/products'),'method'=>'GET'])}}
                 <div class="row">
                     <div class="col-10">
                         @include('forms._input', [
@@ -21,11 +25,29 @@
                 </div>
 
                 <div class="row pb-2 mt-5">
-                    <div class="col-12">
-                        Список продуктов
+                <div class="col-12">
+                    Список категорий:
+                </div>
+                @forelse($categories as $key=>$category)
+                    <div class="row">
+                        <div class="col-3">
+                            <button class="btn bnt-transparent" form="category-{{$key}}" style="">
+                                {{$category}}
+                            </button>
+                        </div>
                     </div>
+                    {{Form::open(['id'=>'category-'.$key,'method'=>'GET', 'url'=>url('/products')])}}
+                    {{Form::hidden('category_id',$key)}}
+                    {{Form::close()}}
+                @empty
+                @endforelse
                 </div>
 
+                <div class="row pb-2 mt-5">
+                    <div class="col-12">
+                        Список продуктов:
+                    </div>
+                </div>
 
                 <div class="row pb-2 mt-4">
                 @forelse($products as $product)
@@ -43,6 +65,7 @@
                 @empty
                 @endforelse
                 </div>
+
             </div>
         </div>
     </div>

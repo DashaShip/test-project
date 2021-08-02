@@ -5,6 +5,7 @@ namespace App\Http\Controllers\CRM;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
+use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
@@ -17,6 +18,8 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        SEOMeta::setTitle('Пользователи');
+        SEOMeta::setDescription('Просмотр списка пользователей');
         $frd = $request->all();
         $users = User::filter($frd)->get();
         //$users = User::get();
@@ -28,6 +31,8 @@ class UserController extends Controller
      */
     public function create()
     {
+        SEOMeta::setTitle('Новый пользователь');
+        SEOMeta::setDescription('Страница создания нового пользователя');
         return view('crm.users.create');
     }
 
@@ -84,6 +89,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        SEOMeta::setTitle('Редактировать запись');
+        SEOMeta::setDescription('Страница редактирования записи пользователя');
         return view('crm.users.edit', compact('user'));
     }
 

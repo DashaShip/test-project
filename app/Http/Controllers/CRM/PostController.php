@@ -3,28 +3,27 @@
 namespace App\Http\Controllers\CRM;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
 use App\Models\Role;
-use App\Models\User;
 use Artesaos\SEOTools\Facades\SEOMeta;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laratrust\Models\LaratrustRole;
 
-class RoleController extends Controller
+class PostController extends Controller
 {
     /**
+     * @param Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function index(Request $request)
     {
-        SEOMeta::setTitle('Роли');
-        SEOMeta::setDescription('Просмотр списка ролей');
+        SEOMeta::setTitle('Статьи');
+        SEOMeta::setDescription('Просмотр списка постов');
         $frd = $request->all();
-        $roles = Role::filter($frd)->get();
-//        $roles = Role::get();
-        return view('crm.roles.index',compact('roles'));
+        $posts = Post::filter($frd)->get();
+//        $posts = Post::get();
+        return view('crm.posts.index',compact('posts'));
     }
 
     /**
@@ -32,9 +31,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        SEOMeta::setTitle('Содать новую роль');
-        SEOMeta::setDescription('Страница создания роли');
-        return view('crm.roles.create');
+        SEOMeta::setTitle('Новая статья');
+        SEOMeta::setDescription('Страница создания новой статьи');
+        return view('crm.posts.create');
     }
 
     /**
@@ -51,24 +50,21 @@ class RoleController extends Controller
         ];
 
         $messages = [
-            'name.required'=>'Введите имя роли!',
+            'name.required'=>'Введите название статьи!',
             'name.min'=>'Имя должно быть более 2 символов!',
             'name.max'=>'Имя должно быть меньше 30 символов!',
         ];
 
         Validator::make($frd,$rules,$messages)->validate();
 
-        $role = new Role($frd);
-        $role->save();
+        $post = new Post($frd);
+        $post->save();
 
-        return redirect()->route('crm.roles.index');
+        return redirect()->route('crm.posts.index');
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
      */
     public function show($id)
     {
@@ -76,23 +72,21 @@ class RoleController extends Controller
     }
 
     /**
-     * @param Role $role
+     * @param Post $post
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function edit(Role $role)
+    public function edit(Post $post)
     {
         SEOMeta::setTitle('Редактировать запись');
-        SEOMeta::setDescription('Страница редактирования ролей');
-        return view('crm.roles.edit', compact('role'));
+        SEOMeta::setDescription('Страница редактирования записи статьи');
+        return view('crm.posts.edit', compact('post'));
     }
 
     /**
      * @param Request $request
-     * @param Role $role
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Illuminate\Validation\ValidationException
+     * @param $id
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, Post $post)
     {
         $frd = $request->all();
 
@@ -101,25 +95,25 @@ class RoleController extends Controller
         ];
 
         $messages = [
-            'name.required'=>'Введите имя!',
+            'name.required'=>'Введите название статьи!',
             'name.min'=>'Имя должно быть более 2 символов!',
             'name.max'=>'Имя должно быть меньше 30 символов!',
         ];
 
         Validator::make($frd,$rules,$messages)->validate();
 
-        $role->update($frd);
+        $post->update($frd);
 
-        return redirect()->route('crm.roles.index');
+        return redirect()->route('crm.posts.index');
     }
 
     /**
-     * @param Role $role
+     * @param Post $post
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Role $role)
+    public function destroy(Post $post)
     {
-        $role->delete();
-        return redirect()->route('crm.roles.index');
+        $post->delete();
+        return redirect()->route('crm.posts.index');
     }
 }
