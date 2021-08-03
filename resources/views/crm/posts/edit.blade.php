@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
 
-                {{Form::model($post, ['method'=>'PATCH', 'url'=>route('crm.posts.update', $post)])}}
+                {{Form::model($post, ['method'=>'PATCH', 'url'=>route('crm.posts.update', $post),'files'=>true])}}
 
                 @include('crm.posts._form', $post)
 

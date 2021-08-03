@@ -34,5 +34,7 @@ Route::middleware(['role:admin','auth'])
 Route::middleware(['role:user','auth'])
     ->group(static function(){
         Route::get('/products', [\App\Http\Controllers\Site\SiteProductController::class, 'index'])->name('products');
+        Route::get('/posts', [\App\Http\Controllers\Site\SitePostController::class, 'index'])->name('posts');
+        Route::get('posts/{post}', '\App\Http\Controllers\Site\SitePostController@show');
     });
 

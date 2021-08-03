@@ -4,7 +4,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                {{Form::open(['url'=>route('crm.posts.store'),'method'=>'POST'])}}
+                {{Form::open(['url'=>route('crm.posts.store'),'method'=>'POST','files'=>true])}}
 
                 @include('crm.posts._form')
 

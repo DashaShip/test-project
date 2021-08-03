@@ -6,6 +6,16 @@ use App\Traits\ImageTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use phpDocumentor\Reflection\Types\String_;
+use Te7aHoudini\LaravelTrix\Traits\HasTrixRichText;
 
 /**
  * App\Models\Post
@@ -15,7 +25,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $description
  * @property int $super
  * @property int|null $image_id
- * @property string $published_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Post newModelQuery()
@@ -30,11 +39,18 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Post whereSuper($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Post whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \App\Models\File|null $file
+ * @property-read \App\Models\File|null $image
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\File[] $files
+ * @property-read int|null $files_count
+ * @method static Builder|Post filter(array $frd)
+ * @property Carbon $published_at
  */
 class Post extends Model
 {
     use HasFactory;
     use ImageTrait;
+    use HasTrixRichText;
 
     protected $table = 'posts';
 
@@ -44,6 +60,13 @@ class Post extends Model
         'super',
         'image_id',
         'published_at',
+        'post-trixFields',
+        'attachment-post-trixFields'
+    ];
+
+    protected $casts = [
+        'published_at' => 'datetime',
+        'super'=>'boolean',
     ];
 
     /**
@@ -79,9 +102,9 @@ class Post extends Model
     }
 
     /**
-     * @return int
+     * @return bool
      */
-    public function getSuper(): int
+    public function isSuper(): Bool
     {
         return $this->super;
     }
@@ -111,17 +134,17 @@ class Post extends Model
     }
 
     /**
-     * @return string
+     * @return \Carbon\Carbon
      */
-    public function getPublishedAt(): string
+    public function getPublishedAt(): \Carbon\Carbon
     {
         return $this->published_at;
     }
 
     /**
-     * @param string $published_at
+     * @param $published_at
      */
-    public function setPublishedAt(string $published_at)
+    public function setPublishedAt($published_at)
     {
         $this->published_at = $published_at;
     }
@@ -168,4 +191,75 @@ class Post extends Model
         return $query;
     }
 
+    /**
+     * @return HasOne
+     */
+    public function file(): HasOne
+    {
+        return $this->hasOne(File::class, 'id', 'image_id');
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function files(): BelongsToMany
+    {
+        return $this->belongsToMany(File::class, 'posts_images', 'post_id', 'file_id');
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    /**
+     * @param array $files
+     */
+    public function uploadGallery(array $files): void
+    {
+        $this->files()->delete();
+        foreach ($files as $key => $file) {
+            /** @var Storage $storage */
+            $storage = Storage::disk('public');
+            $name = Str::slug($this->getName()).'-'.$this->getKey().'-'.$key.'.jpg';
+            $path = 'images/'.$name;
+            Storage::disk('public')->delete($path);
+            $storage->put($path, $file->get());
+            $path.='?'.Carbon::now();
+            $file = $this->files()->create([
+                'user_id'=>auth()->id(),
+                'name'=>$name,
+                'path'=>$path,
+            ]);
+        }
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFilesPath(): ?string
+    {
+        $result = null;
+        if ($this->getFiles() !== null) {
+            $result = '/storage/'.$this->getFile()->getPath();
+        }
+        return $result;
+    }
+
+    /**
+     * @param string|null $name
+     * @return string
+     */
+    public function getTrixContent(?string $name = null)
+    {
+        if ($name === null) {
+            $content = $this->trixRichText();
+        } else {
+            $content = $this->trixRichText()->where('field', $name);
+        }
+        return $content->first()->content ?? '';
+    }
 }

@@ -15,7 +15,8 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
         "laravelcollective/html": "^6.2",
-        "santigarcor/laratrust": "^6.3"
+        "santigarcor/laratrust": "^6.3",
+        "te7a-houdini/laravel-trix": "^2.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",

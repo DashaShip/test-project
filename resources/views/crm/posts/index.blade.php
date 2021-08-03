@@ -57,16 +57,17 @@
                     <div class="col-1">
                         {{$post->getKey()}}
                     </div>
-                    <div class="col-3">
+                    <div class="col-2">
                         {{$post->getName()}}
                     </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             {{$post->getDescription()}}
+{{--                            <div>{!!$post->getTrixContent()!!}</div>--}}
                         </div>
                         <div class="col-3">
-                            {{$post->getImageId()}}
+                           <img src="{{$post->getImagePath()}}" alt="" style="width: 150px">
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             {{$post->getPublishedAt()}}
                         </div>
                     <div class="col-1">

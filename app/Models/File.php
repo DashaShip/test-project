@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @mixin \Eloquent
  * @property-read \App\Models\Product|null $product
  * @property-read \App\Models\Product|null $user
+ * @property-read \App\Models\Post|null $post
  */
 class File extends Model
 {
@@ -120,6 +121,10 @@ class File extends Model
     public function user():HasOne
     {
         return $this->hasOne(Product::class, 'id', 'users_id');
+    }
+    public function post():HasOne
+    {
+        return $this->hasOne(Post::class,'image_id','id');
     }
 
 }

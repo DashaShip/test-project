@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\Role;
 use Artesaos\SEOTools\Facades\SEOMeta;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Laratrust\Models\LaratrustRole;
 
@@ -39,6 +42,7 @@ class PostController extends Controller
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
@@ -51,14 +55,25 @@ class PostController extends Controller
 
         $messages = [
             'name.required'=>'Введите название статьи!',
-            'name.min'=>'Имя должно быть более 2 символов!',
-            'name.max'=>'Имя должно быть меньше 30 символов!',
+            'name.min'=>'Название должно быть более 2 символов!',
+            'name.max'=>'Название должно быть меньше 30 символов!',
         ];
 
         Validator::make($frd,$rules,$messages)->validate();
 
+        $frd['super']=(int) Arr::has($frd, 'super');
         $post = new Post($frd);
         $post->save();
+
+        $file = Arr::get($frd, 'file');
+        if($file instanceof UploadedFile) {
+            $post->uploadFile($file);
+        }
+
+        $files = Arr::get($frd, 'files');
+        if ($files !== null) {
+            $post->uploadGallery($files);
+        }
 
         return redirect()->route('crm.posts.index');
     }
@@ -84,7 +99,10 @@ class PostController extends Controller
 
     /**
      * @param Request $request
-     * @param $id
+     * @param Post $post
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(Request $request, Post $post)
     {
@@ -102,7 +120,19 @@ class PostController extends Controller
 
         Validator::make($frd,$rules,$messages)->validate();
 
+        $frd['super']=(int) Arr::has($frd, 'super');
+
         $post->update($frd);
+
+        $file = Arr::get($frd, 'file');
+        if($file instanceof UploadedFile) {
+            $post->uploadFile($file);
+        }
+
+        $files = Arr::get($frd, 'files');
+        if ($files !== null) {
+            $post->uploadGallery($files);
+        }
 
         return redirect()->route('crm.posts.index');
     }

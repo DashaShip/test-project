@@ -14,6 +14,14 @@
     'value'=>isset($post) ? $post->getDescription() : '',
  ])
 
+@if (isset($post))
+    Подробное описание
+    @trix($post,'content')
+@else
+    Подробное описание
+    @trix(\App\Models\Post::class, 'content')
+@endif
+
 @include('forms._checkbox', [
     'label'=>'Большой?',
     'name'=>'super',
@@ -35,5 +43,5 @@
     'label'=>'Время публикации',
     'name'=>'published_at',
     'type'=>'datetime-local',
-    'value'=>isset($post)?$post->getPublisheAt()->format('Y-m-d\TH:i'):'',
+    'value'=>isset($post)?$post->getPublishedAt()->format('Y-m-d\TH:i'):'',
 ])
